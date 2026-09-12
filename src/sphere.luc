@@ -19,19 +19,22 @@ pub class Orbit:
         self.pause = pause
 
     pub func toggle(self) -> unit!:
-        self.spinning = not self.spinning
-        try self.pause.set_text("Pause" if self.spinning else "Resume")
+        let spinning = not self.spinning
+        self.pause.set_text("Pause" if spinning else "Resume")
+        self.spinning = spinning
 
     pub func reset(self) -> unit!:
-        self.angle = 0.0
-        try self.update(0.0)
+        self.set_angle(0.0)
 
     pub func update(self, elapsed: float) -> unit!:
-        if self.spinning:
-            self.angle += math.min(elapsed, 0.1)
-        try self.sphere.set_rotation(Vector3(0.2, self.angle, 0.0))
-        try self.moon.set_position(Vector3(math.cos(self.angle) * 1.65,
-            math.sin(self.angle * 0.7) * 0.4, math.sin(self.angle) * 1.65))
+        let angle = self.angle + math.min(elapsed, 0.1) if self.spinning else self.angle
+        self.set_angle(angle)
+
+    func set_angle(self, angle: float) -> unit!:
+        self.sphere.set_rotation(Vector3(0.2, angle, 0.0))
+        self.moon.set_position(Vector3(math.cos(angle) * 1.65,
+            math.sin(angle * 0.7) * 0.4, math.sin(angle) * 1.65))
+        self.angle = angle
 
 pub func main(arguments: list[str]) -> int!:
     var smoke = false
@@ -41,31 +44,31 @@ pub func main(arguments: list[str]) -> int!:
         else:
             error(ui.invalid, f"unknown option: {argument}")
 
-    let geometry = try SphereGeometry(1.0, 40, 24)
-    let sphere = try Mesh(geometry, try MeshLambertMaterial(Color(0.06, 0.4, 0.95)))
-    let moon = try Mesh(geometry, try MeshLambertMaterial(Color(1.0, 0.35, 0.06)))
-    try moon.set_scale(Vector3(0.22, 0.22, 0.22))
-    let scene = try Scene()
-    try scene.add(sphere)
-    try scene.add(moon)
-    try scene.add(try AmbientLight(intensity = 0.25))
-    try scene.add(try DirectionalLight(direction = Vector3(1.0, 1.0, 2.0), intensity = 0.9))
-    let camera = try PerspectiveCamera(50.0, near = 0.1, far = 100.0)
-    try camera.set_position(Vector3(0.0, 0.5, 5.0))
-    let view = try SceneView(scene, camera, width = 320.0, height = 240.0)
-    let pause = try Button("Pause")
-    let reset = try Button("Reset")
+    let geometry = SphereGeometry(1.0, 40, 24)
+    let sphere = Mesh(geometry, MeshLambertMaterial(Color(0.06, 0.4, 0.95)))
+    let moon = Mesh(geometry, MeshLambertMaterial(Color(1.0, 0.35, 0.06)))
+    moon.set_scale(Vector3(0.22, 0.22, 0.22))
+    let scene = Scene()
+    scene.add(sphere)
+    scene.add(moon)
+    scene.add(AmbientLight(intensity = 0.25))
+    scene.add(DirectionalLight(direction = Vector3(1.0, 1.0, 2.0), intensity = 0.9))
+    let camera = PerspectiveCamera(50.0, near = 0.1, far = 100.0)
+    camera.set_position(Vector3(0.0, 0.5, 5.0))
+    let view = SceneView(scene, camera, width = 320.0, height = 240.0)
+    let pause = Button("Pause")
+    let reset = Button("Reset")
     let orbit = Orbit(sphere, moon, pause)
-    let paused = try pause.on_click(orbit.toggle)
-    let reset_clicked = try reset.on_click(orbit.reset)
-    let content = try VStack([
-        try HStack([try Text("Luce 3D"), try Spacer(), pause, reset]),
+    let paused = pause.on_click(orbit.toggle)
+    let reset_clicked = reset.on_click(orbit.reset)
+    let content = VStack([
+        HStack([Text("Luce 3D"), Spacer(), pause, reset]),
         view,
-        try Text("Realtime 3D in a UI viewport")
+        Text("Realtime 3D in a UI viewport")
     ], spacing = 16.0, padding = 20.0)
-    let app = try Application(content, title = "Luce 3D", width = 960, height = 720)
-    let animated = try app.on_frame(orbit.update)
-    try app.run(frame_limit = 12 if smoke else 0)
+    let app = Application(content, title = "Luce 3D", width = 960, height = 720)
+    let animated = app.on_frame(orbit.update)
+    app.run(frame_limit = 12 if smoke else 0)
     animated.disconnect()
     reset_clicked.disconnect()
     paused.disconnect()

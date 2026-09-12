@@ -9,8 +9,9 @@ pub class Counter:
         self.label = label
 
     pub func increment(self) -> unit!:
-        self.count += 1
-        try self.label.set_text(f"Clicks {self.count}")
+        let count = self.count + 1
+        self.label.set_text(f"Clicks {count}")
+        self.count = count
 
 pub func main(arguments: list[str]) -> int!:
     var smoke = false
@@ -20,18 +21,18 @@ pub func main(arguments: list[str]) -> int!:
         else:
             error(ui.invalid, f"unknown option: {argument}")
 
-    let label = try Text("Clicks 0")
+    let label = Text("Clicks 0")
     let counter = Counter(label)
-    let button = try Button("Add one")
-    let clicked = try button.on_click(counter.increment)
-    let content = try VStack([
-        try Text("Luce UI"),
-        try HStack([button, label, try Spacer()], spacing = 20.0),
-        try Text("Click the button or use Tab and Space"),
-        try Spacer()
+    let button = Button("Add one")
+    let clicked = button.on_click(counter.increment)
+    let content = VStack([
+        Text("Luce UI"),
+        HStack([button, label, Spacer()], spacing = 20.0),
+        Text("Click the button or use Tab and Space"),
+        Spacer()
     ], spacing = 20.0, padding = 24.0)
-    let app = try Application(content, title = "Luce UI", width = 760, height = 360)
-    try app.run(frame_limit = 12 if smoke else 0)
+    let app = Application(content, title = "Luce UI", width = 760, height = 360)
+    app.run(frame_limit = 12 if smoke else 0)
     clicked.disconnect()
     print("UI demo complete")
     return 0
