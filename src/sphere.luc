@@ -1,0 +1,73 @@
+from ui import Application, Button, Text, VStack, HStack, Spacer
+from three import Scene, Mesh, SphereGeometry, MeshLambertMaterial, Color, Vector3, PerspectiveCamera, AmbientLight, DirectionalLight
+from three_ui import SceneView
+import math
+import ui
+
+## Only application behavior lives here. The UI owns input and frame delivery;
+## the scene view owns rendering and adjusts projection to its allocated space.
+pub class Orbit:
+    let sphere: Mesh
+    let moon: Mesh
+    let pause: Button
+    var spinning: bool = true
+    var angle: float = 0.0
+
+    pub func init(self, sphere: Mesh, moon: Mesh, pause: Button):
+        self.sphere = sphere
+        self.moon = moon
+        self.pause = pause
+
+    pub func toggle(self) -> unit!:
+        self.spinning = not self.spinning
+        try self.pause.set_text("Pause" if self.spinning else "Resume")
+
+    pub func reset(self) -> unit!:
+        self.angle = 0.0
+        try self.update(0.0)
+
+    pub func update(self, elapsed: float) -> unit!:
+        if self.spinning:
+            self.angle += math.min(elapsed, 0.1)
+        try self.sphere.set_rotation(Vector3(0.2, self.angle, 0.0))
+        try self.moon.set_position(Vector3(math.cos(self.angle) * 1.65,
+            math.sin(self.angle * 0.7) * 0.4, math.sin(self.angle) * 1.65))
+
+pub func main(arguments: list[str]) -> int!:
+    var smoke = false
+    for argument in arguments:
+        if argument == "--smoke":
+            smoke = true
+        else:
+            error(ui.invalid, f"unknown option: {argument}")
+
+    let geometry = try SphereGeometry(1.0, 40, 24)
+    let sphere = try Mesh(geometry, try MeshLambertMaterial(Color(0.06, 0.4, 0.95)))
+    let moon = try Mesh(geometry, try MeshLambertMaterial(Color(1.0, 0.35, 0.06)))
+    try moon.set_scale(Vector3(0.22, 0.22, 0.22))
+    let scene = try Scene()
+    try scene.add(sphere)
+    try scene.add(moon)
+    try scene.add(try AmbientLight(intensity = 0.25))
+    try scene.add(try DirectionalLight(direction = Vector3(1.0, 1.0, 2.0), intensity = 0.9))
+    let camera = try PerspectiveCamera(50.0, near = 0.1, far = 100.0)
+    try camera.set_position(Vector3(0.0, 0.5, 5.0))
+    let view = try SceneView(scene, camera, width = 320.0, height = 240.0)
+    let pause = try Button("Pause")
+    let reset = try Button("Reset")
+    let orbit = Orbit(sphere, moon, pause)
+    let paused = try pause.on_click(orbit.toggle)
+    let reset_clicked = try reset.on_click(orbit.reset)
+    let content = try VStack([
+        try HStack([try Text("Luce 3D"), try Spacer(), pause, reset]),
+        view,
+        try Text("Realtime 3D in a UI viewport")
+    ], spacing = 16.0, padding = 20.0)
+    let app = try Application(content, title = "Luce 3D", width = 960, height = 720)
+    let animated = try app.on_frame(orbit.update)
+    try app.run(frame_limit = 12 if smoke else 0)
+    animated.disconnect()
+    reset_clicked.disconnect()
+    paused.disconnect()
+    print("sphere demo complete")
+    return 0

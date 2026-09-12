@@ -1,0 +1,42 @@
+from ui_demo import Counter
+from sphere import Orbit
+from ui import Button, Text
+from three import SphereGeometry, Mesh, MeshLambertMaterial, Color
+
+pub func main(arguments: list[str]) -> int!:
+    let label = try Text("Clicks 0")
+    let counter = Counter(label)
+    let button = try Button("Add one")
+    let counted = try button.on_click(counter.increment)
+    try button.click()
+    try button.click()
+    assert(label.text() == "Clicks 2")
+    counted.disconnect()
+    try button.click()
+    assert(label.text() == "Clicks 2")
+    let geometry = try SphereGeometry()
+    let material = try MeshLambertMaterial(Color(0.1, 0.4, 1.0))
+    let sphere = try Mesh(geometry, material)
+    let moon = try Mesh(geometry, material)
+    let pause = try Button("Pause")
+    let reset = try Button("Reset")
+    let orbit = Orbit(sphere, moon, pause)
+    let paused = try pause.on_click(orbit.toggle)
+    let reset_clicked = try reset.on_click(orbit.reset)
+    try orbit.update(0.05)
+    let initial = sphere.rotation()
+    assert(initial.y > 0.0)
+    try pause.click()
+    assert(pause.text() == "Resume")
+    try orbit.update(0.05)
+    assert(sphere.rotation() == initial)
+    try reset.click()
+    assert(sphere.rotation().y == 0.0 and moon.position().x == 1.65)
+    try pause.click()
+    assert(pause.text() == "Pause")
+    try orbit.update(0.05)
+    assert(sphere.rotation().y > 0.0)
+    paused.disconnect()
+    reset_clicked.disconnect()
+    print("ok demo counter, pause, resume, reset and animation")
+    return 0
