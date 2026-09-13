@@ -43,7 +43,7 @@ with tempfile.TemporaryDirectory(prefix='luce-demos-tests-') as temporary:
         subprocess.run([str(binary)], check=True, env=env, timeout=30)
         clean()
     invalid = work / 'invalid.luc'
-    invalid.write_text('pub func main(arguments: list[str]) -> int!:\n    return absent\n', encoding='utf-8', newline='\n')
+    invalid.write_bytes(('pub func main(arguments: list[str]) -> int!:\n    return absent\n').encode('utf-8'))
     result = subprocess.run([str(luce), 'build', str(invalid), '-o', str(output / 'invalid')], capture_output=True, text=True, env=env, timeout=60)
     assert result.returncode != 0 and 'absent' in result.stderr, result
     assert sorted(p.name for p in output.iterdir()) == expected_outputs
