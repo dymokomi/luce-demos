@@ -19,9 +19,9 @@ def build(demo, luce, base, output, opt=0):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("demo", choices=["ui", "sphere", "all"], nargs="?", default="all")
-    parser.add_argument("--luce", type=Path, default=ROOT.parent / "luce/build/luce")
+    parser.add_argument("--luce", type=Path, default=ROOT.parent / ("luce/build/luce.exe" if os.name == "nt" else "luce/build/luce"))
     parser.add_argument("--base", type=Path, default=Path(os.environ.get(
-        "LUCE_BASE_COMPILER", ROOT.parent / "luce-base/build/luce-base")))
+        "LUCE_BASE_COMPILER", ROOT.parent / ("luce-base/build/luce-base.exe" if os.name == "nt" else "luce-base/build/luce-base"))))
     parser.add_argument("--opt", type=int, choices=range(4), default=0)
     parser.add_argument("--output-directory", type=Path, default=ROOT / "build")
     args = parser.parse_args()
