@@ -21,6 +21,8 @@ jobs:
           echo "luce=$(cat luce-demos/bootstrap/LUCE)" >> "$GITHUB_OUTPUT"
           echo "ui=$(cat luce-demos/bootstrap/UI)" >> "$GITHUB_OUTPUT"
           echo "three=$(cat luce-demos/bootstrap/THREE)" >> "$GITHUB_OUTPUT"
+          echo "color=$(cat luce-demos/bootstrap/COLOR)" >> "$GITHUB_OUTPUT"
+          echo "svg=$(cat luce-demos/bootstrap/SVG)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v7
         with:
           repository: dymokomi/luce-base
@@ -41,6 +43,16 @@ jobs:
           repository: dymokomi/luce-3d
           ref: ${{ steps.pins.outputs.three }}
           path: luce-3d
+      - uses: actions/checkout@v7
+        with:
+          repository: dymokomi/luce-color
+          ref: ${{ steps.pins.outputs.color }}
+          path: luce-color
+      - uses: actions/checkout@v7
+        with:
+          repository: dymokomi/luce-svg
+          ref: ${{ steps.pins.outputs.svg }}
+          path: luce-svg
       - name: Select Clang
         run: |
           mkdir -p "$RUNNER_TEMP/luce-bin"
