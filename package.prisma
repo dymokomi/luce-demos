@@ -1,0 +1,20 @@
+#prisma 4.0
+def package "luce-demos" {
+    str owner = "dymokomi"
+    str version = "0.1.0"
+    str language = "luce"
+    str description = "Small applications written in Luce, using the Luce Base luce-ui and luce-3d packages. Native compilation is the default. The standard library owns window, input and GPU backend resources; applications own their behavior."
+    str readme = "README.md"
+
+    def dependency "luce-ui" {
+        str owner = "dymokomi"
+        str version = "^0.1.0"
+        str path = "../luce-ui"
+    }
+
+    def dependency "luce-3d" {
+        str owner = "dymokomi"
+        str version = "^0.1.0"
+        str path = "../luce-3d"
+    }
+}
