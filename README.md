@@ -6,7 +6,7 @@ input and GPU backend resources; applications own their behavior.
 
 - `src/ui_demo.luc`: a counter, a button and declarative stack layout. A retained
   connection calls the counter's bound `increment` method.
-- `src/sphere.luc`: a lit sphere and orbiting moon inside a `SceneView`, with
+- `src/sphere.luc`: a lit sphere and orbiting moon inside luce-ui's `SceneView`, with
   pause/resume and reset controls. `Application.on_frame` drives animation.
 
 Check out the exact revisions from `bootstrap/BASE`, `bootstrap/LUCE`,
