@@ -1,7 +1,7 @@
 from ui_demo import Counter
 from sphere import Orbit
-from ui import Button, Text
-from three import SphereGeometry, Mesh, MeshLambertMaterial, Color
+from luce_ui.ui import Button, Text
+from luce_3d.graphics import SphereGeometry, Mesh, MeshLambertMaterial, Color
 
 pub func main(arguments: list[str]) -> int!:
     let label = Text("Clicks 0")

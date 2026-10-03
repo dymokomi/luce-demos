@@ -1,7 +1,7 @@
-from ui import Application, Button, Text, VStack, HStack, Spacer, SceneView
-from three import Scene, Mesh, SphereGeometry, MeshLambertMaterial, Color, Vector3, PerspectiveCamera, AmbientLight, DirectionalLight
-import math
-import ui
+from luce_ui.ui import Application, Button, Text, VStack, HStack, Spacer, SceneView
+from luce_3d.graphics import Scene, Mesh, SphereGeometry, MeshLambertMaterial, Color, Vector3, PerspectiveCamera, AmbientLight, DirectionalLight
+import luce_std.math
+import luce_ui.ui
 
 ## Only application behavior lives here. The UI owns input and frame delivery;
 ## the scene view owns rendering and adjusts projection to its allocated space.

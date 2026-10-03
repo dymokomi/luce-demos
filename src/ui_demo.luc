@@ -1,5 +1,5 @@
-from ui import Application, Button, Text, VStack, HStack, Spacer
-import ui
+from luce_ui.ui import Application, Button, Text, VStack, HStack, Spacer
+import luce_ui.ui
 
 pub class Counter:
     let label: Text
