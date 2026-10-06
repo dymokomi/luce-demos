@@ -9,9 +9,9 @@ input and GPU backend resources; applications own their behavior.
 - `src/sphere.luc`: a lit sphere and orbiting moon inside luce-ui's `SceneView`, with
   pause/resume and reset controls. `Application.on_frame` drives animation.
 
-Check out the exact revisions from `bootstrap/BASE`, `bootstrap/LUCE`,
-`bootstrap/UI` and `bootstrap/THREE` alongside this repository as `luce-base`,
-`luce`, `luce-ui` and `luce-3d`. Build the compilers, then:
+Check out `luce-base`, `luce`, `luce-ui`, `luce-3d` and what they use alongside this
+repository, at main (`python3 ../luce-base/tools/checkout_main.py . ../luce` clones the
+missing ones). Build the compilers, then:
 
 ```sh
 ./build.sh
