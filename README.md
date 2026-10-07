@@ -28,11 +28,11 @@ level or output directory, use `python3 tools/build.py --opt 3 --output-director
 /path/to/output`. Dependencies are resolved through their manifests and public
 exports. Normal builds keep no generated Base source or staged dependencies.
 
-`./test.sh` compiles both examples and runs their counter/pause/reset/animation
-interaction tests at native optimization levels 0–3. It also checks that successful
-and failed builds clean up their temporary output. `./test.sh --gui` additionally
-runs both windows with Metal API/shader validation. CI runs portable tests on
-ARM64 macOS and x86-64 Linux, with GUI smoke tests on macOS.
+`luc test` runs `tests/interaction`, the counter/pause/reset/animation handlers
+driven without a window, and `tests/builds`, which compiles both examples and checks
+that successful and failed builds leave nothing in the temporary directory. To see the
+windows themselves, run `build/ui --smoke` and `build/sphere --smoke` after `./build.sh`
+(with `MTL_DEBUG_LAYER=1 MTL_SHADER_VALIDATION=1` for Metal's validation on macOS).
 
 The examples intentionally retain the language's current explicit `try` syntax.
 Error-handling ergonomics are a separate language design discussion, not a
@@ -43,5 +43,5 @@ release. Licensed under MIT or Apache-2.0, at your option.
 
 ## Windows x64
 
-Build sibling `luce-base` and `luce` checkouts with `python tools/build_windows.py` in each compiler repository. Run `python tests/run.py` in this repository; the runner selects the sibling Windows executables.
-For real windows and rendering, install the Vulkan SDK and start a fresh terminal with `VULKAN_SDK` set. Run `python tools/build.py`, then `build/ui.exe` or `build/sphere.exe`; `python tests/run.py --gui` exercises actual presentation. CPU tests run in hosted Windows CI; GPU smoke tests require an interactive desktop and Vulkan hardware.
+Run `luc test` as on the other hosts.
+For real windows and rendering, install the Vulkan SDK and start a fresh terminal with `VULKAN_SDK` set. Run `python tools/build.py`, then `build/ui.exe --smoke` or `build/sphere.exe --smoke`; they need an interactive desktop and Vulkan hardware.

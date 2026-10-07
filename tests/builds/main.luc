@@ -1,0 +1,47 @@
+# The demos build natively from their public package imports, and a build leaves nothing
+# behind in the temporary directory, after a successful build or a failed one. Each build
+# gets a temporary directory of its own to check; xcrun and the Vulkan validation layer
+# keep their own caches there, which are not the compiler's.
+from luce_std import files, paths, process
+
+let failed = ErrorCode.package(1)
+
+func leftovers(scratch: str) -> list[str]!:
+    var left: list[str] = []
+    for name in files.list(scratch):
+        if name != "xcrun_db" and name != "shader_validation_cache.bin":
+            left.append(name)
+    return left
+
+pub func main(arguments: list[str]) -> int!:
+    let luce = process.variable("LUCE") else "luce"
+    let top = paths.directory(paths.directory(process.current_directory()))
+    let work = paths.join(top, "build/tests/builds/work")
+    if files.exists(work):
+        files.remove_tree(work)
+    let scratch = paths.join(work, "scratch")
+    let output = paths.join(work, "output")
+    files.ensure_directory(scratch)
+    files.ensure_directory(output)
+    let environment = [f"TMPDIR={scratch}", f"TEMP={scratch}", f"TMP={scratch}"]
+    for (source, name) in [("ui_demo.luc", "ui"), ("sphere.luc", "sphere")]:
+        let built = process.run(luce, ["build", paths.join(top, f"src/{source}"), "--native", "-o", paths.join(output, name)], top, environment)
+        if built.exit_code != 0:
+            error(failed, f"{source} does not build: {built.output}{built.error_output}")
+        let left = leftovers(scratch)
+        if left.length > 0:
+            error(failed, f"building {source} left {left} in the temporary directory")
+    let invalid = paths.join(work, "invalid.luc")
+    files.write_text(invalid, "pub func main(arguments: list[str]) -> int!:\n    return absent\n")
+    let refused = process.run(luce, ["build", invalid, "-o", paths.join(output, "invalid")], work, environment)
+    if refused.exit_code == 0 or not ("absent" in refused.error_output):
+        error(failed, f"a program naming an absent value built: {refused.error_output}")
+    let built = files.list(output)
+    if built.length != 2:
+        error(failed, f"the output holds {built}, not the two demos alone")
+    let left = leftovers(scratch)
+    if left.length > 0:
+        error(failed, f"a failed build left {left} in the temporary directory")
+    files.remove_tree(work)
+    print("ok native demo builds and clean temporary directories")
+    return 0

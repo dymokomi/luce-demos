@@ -1,3 +1,5 @@
+# The demos' handlers, driven without a window: buttons click, labels update, the orbit
+# pauses, resumes and resets.
 from ui_demo import Counter
 from sphere import Orbit
 from luce_ui.ui import Button, Text
