@@ -15,7 +15,7 @@ func leftovers(scratch: str) -> list[str]!:
 
 pub func main(arguments: list[str]) -> int!:
     let luce = process.variable("LUCE") else "luce"
-    let top = paths.directory(paths.directory(process.current_directory()))
+    let top = process.current_directory()
     let work = paths.join(top, "build/tests/builds/work")
     if files.exists(work):
         files.remove_tree(work)
