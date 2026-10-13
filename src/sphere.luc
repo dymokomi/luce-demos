@@ -1,5 +1,5 @@
 from luce_ui.ui import Application, Button, Text, VStack, HStack, Spacer, SceneView
-from luce_3d.graphics import Scene, Mesh, SphereGeometry, MeshLambertMaterial, Color, Vector3, PerspectiveCamera, AmbientLight, DirectionalLight
+from luce_3d.graphics import Scene, Mesh, SphereGeometry, MeshLambertMaterial, Color, Vector3, Camera, AmbientLight, DirectionalLight
 from luce_std import math
 from luce_ui import ui
 
@@ -52,7 +52,7 @@ pub func main(arguments: list[str]) -> int!:
     scene.add(moon)
     scene.add(AmbientLight(intensity = 0.25))
     scene.add(DirectionalLight(direction = Vector3(1.0, 1.0, 2.0), intensity = 0.9))
-    let camera = PerspectiveCamera(50.0, near = 0.1, far = 100.0)
+    let camera = Camera(50.0, near = 0.1, far = 100.0)
     camera.set_position(Vector3(0.0, 0.5, 5.0))
     let view = SceneView(scene, camera, width = 320.0, height = 240.0)
     let pause = Button("Pause")
