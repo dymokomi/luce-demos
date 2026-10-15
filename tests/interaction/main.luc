@@ -2,8 +2,8 @@
 # pauses, resumes and resets.
 from ui_demo import Counter
 from sphere import Orbit
-from luce_ui.ui import Button, Text
-from luce_3d.graphics import SphereGeometry, Mesh, MeshLambertMaterial, Color
+from luce_ui.ui import Button, Text, SceneView
+from luce_3d.graphics import SphereGeometry, Mesh, MeshLambertMaterial, Color, Scene, Camera
 
 pub func main(arguments: list[str]) -> int!:
     let label = Text("Clicks 0")
@@ -22,7 +22,10 @@ pub func main(arguments: list[str]) -> int!:
     let moon = Mesh(geometry, material)
     let pause = Button("Pause")
     let reset = Button("Reset")
-    let orbit = Orbit(sphere, moon, pause)
+    let scene = Scene()
+    scene.add(sphere)
+    let view = SceneView(scene, Camera(50.0), width = 64.0, height = 48.0)
+    let orbit = Orbit(sphere, moon, pause, view)
     let paused = pause.on_click(orbit.toggle)
     let reset_clicked = reset.on_click(orbit.reset)
     orbit.update(0.05)
